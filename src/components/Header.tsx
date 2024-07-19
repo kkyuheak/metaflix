@@ -1,18 +1,21 @@
 import { motion, Variants } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { RxMagnifyingGlass } from "react-icons/rx";
+import { Link, Outlet, useLocation } from "react-router-dom";
 // import { Link, Outlet } from "react-router-dom";
 import styled from "styled-components";
 
 const Wrapper = styled.header`
   width: 100%;
-  height: 60px;
-  background-color: #bebebe;
+  height: 70px;
+  background-color: #000000;
   position: fixed;
   top: 0;
+  color: #fff;
 `;
 
 const Inner = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -31,7 +34,7 @@ const LeftItems = styled.div`
 `;
 
 const Svg = styled.svg`
-  height: 100%;
+  height: 50px;
 `;
 
 const LeftList = styled.ul`
@@ -46,11 +49,11 @@ const Item = styled.li`
   position: relative;
 `;
 
-const Circle = styled.span`
+const Circle = styled(motion.span)`
   width: 5px;
   height: 5px;
   position: absolute;
-  bottom: -3px;
+  bottom: 0px;
   right: 0;
   left: 0;
   margin: 0 auto;
@@ -58,10 +61,25 @@ const Circle = styled.span`
   background-color: blue;
 `;
 
-const RightItems = styled.div`
+const RightItems = styled.ul`
   width: 300px;
   height: 100%;
   /* background-color: blue; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RightItem = styled.li`
+  cursor: pointer;
+`;
+
+const SearchBack = styled(motion.div)`
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
 `;
 
 const logoVarients: Variants = {
@@ -78,7 +96,17 @@ const logoVarients: Variants = {
 };
 
 const Header = () => {
-  // const navigate = useNavigate();
+  const [openSearch, setOpenSearch] = useState(false);
+  const searchOpen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenSearch(true);
+  };
+  useEffect(() => {
+    window.addEventListener("click", () => {
+      setOpenSearch(false);
+    });
+  }, []);
+  const { pathname } = useLocation();
 
   return (
     <>
@@ -101,24 +129,31 @@ const Header = () => {
             <LeftList>
               <Item>
                 <Link to={"/"}>
-                  홈 <Circle />
+                  홈 {pathname === "/" && <Circle layoutId="circle" />}
                 </Link>
               </Item>
               <Item>
                 <Link to={"/tv"}>
-                  TV 프로그램 <Circle />
+                  TV 프로그램
+                  {pathname === "/tv" && <Circle layoutId="circle" />}
                 </Link>
               </Item>
               <Item>
                 <Link to={"/movies"}>
-                  영화 <Circle />
+                  영화 {pathname === "/movies" && <Circle layoutId="circle" />}
                 </Link>
               </Item>
             </LeftList>
           </LeftItems>
-          <RightItems></RightItems>
+          <RightItems>
+            <RightItem>
+              <RxMagnifyingGlass size={40} color="white" onClick={searchOpen} />
+            </RightItem>
+          </RightItems>
         </Inner>
+        {openSearch ? <SearchBack></SearchBack> : null}
       </Wrapper>
+      <Outlet />
     </>
   );
 };
