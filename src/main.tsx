@@ -5,7 +5,7 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { theme } from "./theme.ts";
 
 export const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -57,7 +57,7 @@ table {
   box-sizing: border-box;
 }
 body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Source Code Pro', sans-serif;
   color:black;
   line-height: 1.2;
   
