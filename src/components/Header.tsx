@@ -1,5 +1,5 @@
 import { motion, Variants } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { Link, Outlet, useLocation } from "react-router-dom";
 // import { Link, Outlet } from "react-router-dom";
@@ -77,9 +77,40 @@ const RightItem = styled.li`
 const SearchBack = styled(motion.div)`
   width: 100%;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SearchItems = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const SearchInput = styled(motion.input)`
+  width: 550px;
+  height: 60px;
+  padding: 5px 15px;
+  background-color: #323232;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  font-size: 18px;
+  color: #fff;
+
+  &::placeholder {
+    font-size: 16px;
+    padding-left: 5px;
+  }
+`;
+
+const SearchInputIcon = styled.span`
+  position: absolute;
+  right: 10px;
 `;
 
 const logoVarients: Variants = {
@@ -95,18 +126,26 @@ const logoVarients: Variants = {
   },
 };
 
+const searchVarients: Variants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+  },
+};
+
 const Header = () => {
+  const { pathname } = useLocation();
   const [openSearch, setOpenSearch] = useState(false);
   const searchOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
     setOpenSearch(true);
   };
-  useEffect(() => {
-    window.addEventListener("click", () => {
-      setOpenSearch(false);
-    });
-  }, []);
-  const { pathname } = useLocation();
+
+  const searchClose = () => {
+    setOpenSearch(false);
+  };
 
   return (
     <>
@@ -151,7 +190,25 @@ const Header = () => {
             </RightItem>
           </RightItems>
         </Inner>
-        {openSearch ? <SearchBack></SearchBack> : null}
+        {openSearch ? (
+          <SearchBack
+            onClick={searchClose}
+            variants={searchVarients}
+            initial="initial"
+            animate="animate"
+          >
+            <SearchItems
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+              }}
+            >
+              <SearchInput placeholder="티비 드라마 또는 영화 제목을 입력해주세요" />
+              <SearchInputIcon>
+                <RxMagnifyingGlass color="white" size={33} />
+              </SearchInputIcon>
+            </SearchItems>
+          </SearchBack>
+        ) : null}
       </Wrapper>
       <Outlet />
     </>
