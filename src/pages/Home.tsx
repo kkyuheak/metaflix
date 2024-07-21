@@ -1,5 +1,5 @@
 const Home = () => {
-  return <div style={{ height: 1000 }}>Home</div>;
+  return <div style={{ height: "10000px" }}>Home</div>;
 };
 
 export default Home;

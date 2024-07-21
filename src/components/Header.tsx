@@ -1,11 +1,10 @@
-import { motion, Variants } from "framer-motion";
-import { useState } from "react";
+import { motion, useAnimation, useScroll, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { Link, Outlet, useLocation } from "react-router-dom";
-// import { Link, Outlet } from "react-router-dom";
 import styled from "styled-components";
 
-const Wrapper = styled.header`
+const Wrapper = styled(motion.header)`
   width: 100%;
   height: 70px;
   background-color: #000000;
@@ -29,7 +28,6 @@ const LeftItems = styled.div`
   display: flex;
   align-items: center;
   gap: 40px;
-
   padding-left: 10px;
 `;
 
@@ -126,6 +124,15 @@ const logoVarients: Variants = {
   },
 };
 
+const headerVarients: Variants = {
+  top: {
+    backgroundColor: "rgba(0, 0, 0, 0)",
+  },
+  scroll: {
+    backgroundColor: "rgba(0, 0, 0, 1)",
+  },
+};
+
 const searchVarients: Variants = {
   initial: {
     opacity: 0,
@@ -147,9 +154,28 @@ const Header = () => {
     setOpenSearch(false);
   };
 
+  const { scrollY } = useScroll();
+  const headerAnimation = useAnimation();
+
+  // 헤더 스크롤시 배경 애니메이션
+  useEffect(() => {
+    scrollY.on("change", () => {
+      console.log(scrollY.get());
+      if (scrollY.get() > 80) {
+        headerAnimation.start("scroll");
+      } else {
+        headerAnimation.start("top");
+      }
+    });
+  }, [scrollY, headerAnimation]);
+
   return (
     <>
-      <Wrapper>
+      <Wrapper
+        variants={headerVarients}
+        initial="top"
+        animate={headerAnimation}
+      >
         <Inner>
           <LeftItems>
             <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
