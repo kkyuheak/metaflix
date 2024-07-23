@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { motion, Variants } from "framer-motion";
 import { getMovieImg } from "../util";
 
+import Slider from "../components/Slider";
+
 const HomeWrapper = styled.div`
   height: 10000px;
   background-color: #1e272e;
@@ -21,23 +23,27 @@ const Loader = styled(motion.div)`
 `;
 
 const Banner = styled.div<{ $backImg: string }>`
-  width: 100%;
   height: 100vh;
   color: #fff;
-  background-image: linear-gradient("rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 1)"),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 1)),
     url(${(props) => props.$backImg});
   background-size: cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 20px;
+  padding-left: 60px;
 `;
 
 const Title = styled.h1`
-  /* font-size: 50px; */
+  font-size: 50px;
 `;
 
-const Overview = styled.p``;
+const Overview = styled.p`
+  width: 800px;
+  font-size: 20px;
+  line-height: 150%;
+`;
 
 const loadVarants: Variants = {
   initial: {
@@ -57,18 +63,22 @@ const Home = () => {
   console.log(data);
 
   // 배너 랜덤한 객체 뽑기
-  const randomNum = Math.floor(Math.random() * 21);
+  const randomNum = Math.floor(Math.random() * 20);
+
   return (
     <HomeWrapper>
       {isLoading ? (
         <Loader variants={loadVarants} initial="initial" animate="animate" />
       ) : (
-        <Banner
-          $backImg={getMovieImg(data?.results[randomNum].backdrop_path || "")}
-        >
-          <Title>{data?.results[randomNum].title}</Title>
-          <Overview>{data?.results[randomNum].overview}</Overview>
-        </Banner>
+        <>
+          <Banner
+            $backImg={getMovieImg(data?.results[randomNum].backdrop_path || "")}
+          >
+            <Title>{data?.results[randomNum].title}</Title>
+            <Overview>{data?.results[randomNum].overview}</Overview>
+          </Banner>
+          <Slider data={data!} />
+        </>
       )}
     </HomeWrapper>
   );

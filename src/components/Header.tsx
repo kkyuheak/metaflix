@@ -11,6 +11,7 @@ const Wrapper = styled(motion.header)`
   position: fixed;
   top: 0;
   color: #fff;
+  z-index: 99;
 `;
 
 const Inner = styled.div`
@@ -160,7 +161,6 @@ const Header = () => {
   // 헤더 스크롤시 배경 애니메이션
   useEffect(() => {
     scrollY.on("change", () => {
-      console.log(scrollY.get());
       if (scrollY.get() > 80) {
         headerAnimation.start("scroll");
       } else {
