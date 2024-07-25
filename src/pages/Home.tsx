@@ -77,7 +77,7 @@ const Home = () => {
             <Title>{data?.results[randomNum].title}</Title>
             <Overview>{data?.results[randomNum].overview}</Overview>
           </Banner>
-          <Slider data={data!} />
+          <Slider movieData={data} />
         </>
       )}
     </HomeWrapper>

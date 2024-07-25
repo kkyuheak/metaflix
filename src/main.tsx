@@ -61,6 +61,8 @@ body {
   font-family: 'Source Code Pro', sans-serif;
   color:black;
   line-height: 1.2;
+  overflow-x: hidden;
+
   
 }
 a {

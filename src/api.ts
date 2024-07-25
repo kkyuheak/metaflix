@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 const base_url = import.meta.env.VITE_BASE_URL;
 
@@ -26,4 +28,23 @@ export const getMovies = () => {
   return fetch(
     `${base_url}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
   ).then((response) => response.json());
+};
+
+export const getBoxMovieImg = async (movidId: number) => {
+  // return fetch(
+  //   `${import.meta.env.VITE_BASE_URL}/movie/${movidId}/images?api_key=${
+  //     import.meta.env.VITE_API_KEY
+  //   }&include_image_language=en`
+  // )
+  //   .then((resonse) => resonse.json())
+  //   .then((response) => {
+  //     return response;
+  //   });
+
+  const response = await axios.get(
+    `${import.meta.env.VITE_BASE_URL}/movie/${movidId}/images?api_key=${
+      import.meta.env.VITE_API_KEY
+    }&include_image_language=en`
+  );
+  return response;
 };
