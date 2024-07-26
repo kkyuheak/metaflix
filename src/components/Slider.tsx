@@ -4,8 +4,35 @@ import styled from "styled-components";
 import { IGetMovieImage, IGetMoviesResult } from "../api";
 import { getMovieImg } from "../util";
 
-const Slide = styled.div`
+const ArrowBtn = styled(motion.div)<{ $right?: boolean; $show?: boolean }>`
+  width: 50px;
+  height: 50px;
+  color: #000;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 30px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: ${(props) => (props.$right ? "" : "10px")};
+  right: ${(props) => (props.$right ? "10px" : "")};
+  margin: auto 0;
+  cursor: pointer;
+  z-index: 2;
+  opacity: ${(props) => (props.$show ? 1 : 0)};
+
+  &:hover {
+    background-color: #c5c5c5;
+  }
+`;
+
+const Slide = styled(motion.div)`
   position: relative;
+  border: 1px solid red;
+  height: 200px;
 `;
 
 const Row = styled(motion.div)`
@@ -37,6 +64,15 @@ const rowVariants: Variants = {
   },
 };
 
+const arrowBtnVar: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+};
+
 interface ISliderProps {
   movieData?: IGetMoviesResult;
   movieImg?: IGetMovieImage[];
@@ -60,14 +96,23 @@ const Slider = ({ movieData, movieImg }: ISliderProps) => {
   // 슬라이더 한번에 보여줄 영화 갯수
   const offset = 6;
 
-  // Box movieImg
+  // 슬라이드 호버 시 ArrowBtn
+  const [show, setShow] = useState(false);
+  const [leftShow, setLeftShow] = useState(false);
+  const handleMouseOver = () => {
+    setShow(true);
+    index > 0 ? setLeftShow(true) : setLeftShow(false);
+    console.log("on");
+  };
 
-  // movieData 받아옴 => movieId값을 꺼내서 배열boxImg에 저장 =>
-  // boxImg안에 있는 값을 getBoxMovieImg로 데이터 요청 => 받아온 값의
-
+  const handleMouseLeave = () => {
+    setShow(false);
+  };
   return (
-    <Slide>
-      <button onClick={increaseIndex}>click</button>
+    <Slide onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
+      <ArrowBtn onClick={increaseIndex} $show={leftShow}>
+        {"<"}
+      </ArrowBtn>
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
           variants={rowVariants}
@@ -89,6 +134,9 @@ const Slider = ({ movieData, movieImg }: ISliderProps) => {
             })}
         </Row>
       </AnimatePresence>
+      <ArrowBtn $show={show} $right onClick={increaseIndex}>
+        {">"}
+      </ArrowBtn>
     </Slide>
   );
 };
