@@ -1,7 +1,8 @@
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useState } from "react";
 import styled from "styled-components";
-import { getBoxMovieImg, IGetMoviesResult } from "../api";
+import { IGetMovieImage, IGetMoviesResult } from "../api";
+import { getMovieImg } from "../util";
 
 const Slide = styled.div`
   position: relative;
@@ -15,9 +16,13 @@ const Row = styled(motion.div)`
   position: absolute;
 `;
 
-const Box = styled(motion.div)`
-  height: 150px;
-  background-color: #fff;
+const Box = styled(motion.div)<{ $backImg: string }>`
+  width: 100%;
+  height: 200px;
+  background-image: url(${(props) => props.$backImg});
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
 `;
 
 const rowVariants: Variants = {
@@ -34,8 +39,9 @@ const rowVariants: Variants = {
 
 interface ISliderProps {
   movieData?: IGetMoviesResult;
+  movieImg?: IGetMovieImage[];
 }
-const Slider = ({ movieData }: ISliderProps) => {
+const Slider = ({ movieData, movieImg }: ISliderProps) => {
   // 슬라이더 페이지설정
   const [index, setIndex] = useState(0);
 
@@ -71,10 +77,15 @@ const Slider = ({ movieData }: ISliderProps) => {
           transition={{ type: "tween", duration: 1 }}
           key={index}
         >
-          {movieData?.results
-            .slice(offset * index, offset * index + offset)
+          {movieImg
+            ?.slice(offset * index, offset * index + offset)
             .map((movie) => {
-              return <Box key={movie.id}>{movie.title}</Box>;
+              return (
+                <Box
+                  key={movie.id}
+                  $backImg={getMovieImg(movie.backdrops[0].file_path)}
+                ></Box>
+              );
             })}
         </Row>
       </AnimatePresence>

@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBoxMovieImg, getMovies, IGetMoviesResult } from "../api";
+import {
+  getBoxMovieImg,
+  getMovies,
+  IGetMovieImage,
+  IGetMoviesResult,
+} from "../api";
 import styled from "styled-components";
 import { motion, Variants } from "framer-motion";
 import { getMovieImg } from "../util";
@@ -63,7 +68,7 @@ const Home = () => {
   });
   console.log(nowPlayData);
 
-  const { data: boxMovieImg } = useQuery({
+  const { data: boxMovieImg } = useQuery<IGetMovieImage[]>({
     queryKey: ["boxMovieImg"],
     queryFn: async () => {
       if (nowPlayData) {
@@ -72,6 +77,7 @@ const Home = () => {
         );
         return Promise.all(movieImg);
       }
+      return [];
     },
     enabled: !!nowPlayData,
   });
@@ -95,7 +101,7 @@ const Home = () => {
             <Title>{nowPlayData?.results[randomNum].title}</Title>
             <Overview>{nowPlayData?.results[randomNum].overview}</Overview>
           </Banner>
-          <Slider movieData={nowPlayData} />
+          <Slider movieData={nowPlayData} movieImg={boxMovieImg} />
         </>
       )}
     </HomeWrapper>

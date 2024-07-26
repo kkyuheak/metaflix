@@ -24,10 +24,24 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
+interface ImgInfo {
+  aspect_ratio: number;
+  file_path: string;
+  height: number;
+  iso_639_1: "en";
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface IGetMovieImage {
+  backdrops: ImgInfo[];
+  id: number;
+  logos: ImgInfo[];
+  posters: ImgInfo[];
+}
+
 export const getMovies = async () => {
-  // return fetch(
-  //   `${base_url}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
-  // ).then((response) => response.json());
   const response = await axios.get(
     `${base_url}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
   );
@@ -35,16 +49,10 @@ export const getMovies = async () => {
 };
 
 export const getBoxMovieImg = async (movidId: number) => {
-  // return fetch(
-  //   `${import.meta.env.VITE_BASE_URL}/movie/${movidId}/images?api_key=${
-  //     import.meta.env.VITE_API_KEY
-  //   }&include_image_language=en`
-  // ).then((resonse) => resonse.json());
-
   const response = await axios.get(
     `${import.meta.env.VITE_BASE_URL}/movie/${movidId}/images?api_key=${
       import.meta.env.VITE_API_KEY
-    }&include_image_language=en`
+    }`
   );
   return response.data;
 };
