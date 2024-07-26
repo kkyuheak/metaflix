@@ -2,7 +2,6 @@ import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useState } from "react";
 import styled from "styled-components";
 import { getBoxMovieImg, IGetMoviesResult } from "../api";
-import { useQuery } from "@tanstack/react-query";
 
 const Slide = styled.div`
   position: relative;
@@ -56,32 +55,9 @@ const Slider = ({ movieData }: ISliderProps) => {
   const offset = 6;
 
   // Box movieImg
-  // const [img, setImg] = useState<any>([]);
 
-  const boxImg = movieData?.results.map((movie) => movie.id);
-  console.log(boxImg);
-
-  const { data } = useQuery({
-    queryKey: ["boxImg"],
-    queryFn: () => {
-      const result = boxImg?.map(async (item) => {
-        return await getBoxMovieImg(item);
-      });
-      return result;
-    },
-  });
-
-  if (data) {
-    const result = data.map((item) => {
-      const response = item.then((res) => res);
-      response.then((res) => {
-        return res;
-      });
-    });
-    console.log(result);
-    // console.log(data[0].then((res) => console.log(res.backdrops[0].file_path)));
-  }
-  // movieData 받아옴 => movieId값을 꺼내서 배별로 boxImg에 저장 =>
+  // movieData 받아옴 => movieId값을 꺼내서 배열boxImg에 저장 =>
+  // boxImg안에 있는 값을 getBoxMovieImg로 데이터 요청 => 받아온 값의
 
   return (
     <Slide>

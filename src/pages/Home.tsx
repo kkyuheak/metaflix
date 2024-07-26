@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMovies, IGetMoviesResult } from "../api";
+import { getBoxMovieImg, getMovies, IGetMoviesResult } from "../api";
 import styled from "styled-components";
 import { motion, Variants } from "framer-motion";
 import { getMovieImg } from "../util";
@@ -28,6 +28,7 @@ const Banner = styled.div<{ $backImg: string }>`
   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 1)),
     url(${(props) => props.$backImg});
   background-size: cover;
+  background-position: center center;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -56,11 +57,26 @@ const loadVarants: Variants = {
 };
 
 const Home = () => {
-  const { data, isLoading } = useQuery<IGetMoviesResult>({
+  const { data: nowPlayData, isLoading } = useQuery<IGetMoviesResult>({
     queryKey: ["movies", "now_Play"],
     queryFn: getMovies,
   });
-  console.log(data);
+  console.log(nowPlayData);
+
+  const { data: boxMovieImg } = useQuery({
+    queryKey: ["boxMovieImg"],
+    queryFn: async () => {
+      if (nowPlayData) {
+        const movieImg = nowPlayData.results.map((item) =>
+          getBoxMovieImg(item.id)
+        );
+        return Promise.all(movieImg);
+      }
+    },
+    enabled: !!nowPlayData,
+  });
+
+  console.log(boxMovieImg);
 
   // 배너 랜덤한 객체 뽑기
   const randomNum = Math.floor(Math.random() * 20);
@@ -72,12 +88,14 @@ const Home = () => {
       ) : (
         <>
           <Banner
-            $backImg={getMovieImg(data?.results[randomNum].backdrop_path || "")}
+            $backImg={getMovieImg(
+              nowPlayData?.results[randomNum].backdrop_path || ""
+            )}
           >
-            <Title>{data?.results[randomNum].title}</Title>
-            <Overview>{data?.results[randomNum].overview}</Overview>
+            <Title>{nowPlayData?.results[randomNum].title}</Title>
+            <Overview>{nowPlayData?.results[randomNum].overview}</Overview>
           </Banner>
-          <Slider movieData={data} />
+          <Slider movieData={nowPlayData} />
         </>
       )}
     </HomeWrapper>
