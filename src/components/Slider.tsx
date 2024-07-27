@@ -22,7 +22,7 @@ const ArrowBtn = styled(motion.div)<{ $right?: boolean; $show?: boolean }>`
   margin: auto 0;
   cursor: pointer;
   z-index: 2;
-  opacity: ${(props) => (props.$show ? 1 : 0)};
+  visibility: ${(props) => (props.$show ? "visible" : "hidden")};
 
   &:hover {
     background-color: #c5c5c5;
@@ -53,24 +53,15 @@ const Box = styled(motion.div)<{ $backImg: string }>`
 `;
 
 const rowVariants: Variants = {
-  hidden: {
-    x: window.innerWidth + 10,
-  },
-  visible: {
+  entry: (back: boolean) => ({
+    x: back ? -window.innerWidth - 10 : window.innerWidth + 10,
+  }),
+  center: {
     x: 0,
   },
-  exit: {
-    x: -window.innerWidth - 10,
-  },
-};
-
-const arrowBtnVar: Variants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-  },
+  exit: (back: boolean) => ({
+    x: back ? window.innerWidth + 10 : -window.innerWidth - 10,
+  }),
 };
 
 interface ISliderProps {
@@ -79,19 +70,28 @@ interface ISliderProps {
 }
 const Slider = ({ movieData, movieImg }: ISliderProps) => {
   // 슬라이더 페이지설정
-  const [index, setIndex] = useState(0);
-
+  const [index, setIndex] = useState<number>(0);
+  const [back, setBack] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const increaseIndex = () => {
+
+  const toggleLeaving = () => setLeaving(!leaving);
+  const handleIndex = (cal: string) => {
     if (movieData) {
       if (leaving) return;
       toggleLeaving();
       const totalMovies = movieData.results.length;
       const maxIndex = Math.ceil(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+
+      if (cal === "increase") {
+        setBack(false);
+        setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      } else if (cal === "decrease") {
+        setBack(true);
+        setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      }
+      // setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-  const toggleLeaving = () => setLeaving(!leaving);
 
   // 슬라이더 한번에 보여줄 영화 갯수
   const offset = 6;
@@ -110,14 +110,19 @@ const Slider = ({ movieData, movieImg }: ISliderProps) => {
   };
   return (
     <Slide onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
-      <ArrowBtn onClick={increaseIndex} $show={leftShow}>
+      <ArrowBtn onClick={() => handleIndex("decrease")} $show={leftShow}>
         {"<"}
       </ArrowBtn>
-      <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+      <AnimatePresence
+        initial={false}
+        onExitComplete={toggleLeaving}
+        custom={back}
+      >
         <Row
+          custom={back}
           variants={rowVariants}
-          initial="hidden"
-          animate="visible"
+          initial="entry"
+          animate="center"
           exit="exit"
           transition={{ type: "tween", duration: 1 }}
           key={index}
@@ -134,7 +139,7 @@ const Slider = ({ movieData, movieImg }: ISliderProps) => {
             })}
         </Row>
       </AnimatePresence>
-      <ArrowBtn $show={show} $right onClick={increaseIndex}>
+      <ArrowBtn $show={show} $right onClick={() => handleIndex("increase")}>
         {">"}
       </ArrowBtn>
     </Slide>
